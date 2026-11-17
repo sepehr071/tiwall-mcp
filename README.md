@@ -13,7 +13,7 @@ No API key or account is needed; it works in Claude, Cursor, Copilot and any oth
 [![PyPI](https://img.shields.io/pypi/v/tiwall-mcp?color=2563eb)](https://pypi.org/project/tiwall-mcp/)
 [![Python](https://img.shields.io/pypi/pyversions/tiwall-mcp)](https://pypi.org/project/tiwall-mcp/)
 [![CI](https://github.com/sepehr071/tiwall-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/sepehr071/tiwall-mcp/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-16a34a)](https://github.com/sepehr071/tiwall-mcp/blob/main/LICENSE)
+[![License: PolyForm Noncommercial](https://img.shields.io/badge/license-PolyForm%20Noncommercial-c2410c)](https://github.com/sepehr071/tiwall-mcp/blob/main/LICENSE)
 
 [For AI agents](#for-ai-agents) · [Quick start](#quick-start) · [Tools](#tools) · [Limits](#limits) · [فارسی](#فارسی)
 
@@ -122,3 +122,11 @@ Author: Sepehr Radmard (سپهر رادمرد), [github.com/sepehr071](https://g
 ## Related servers
 
 More Iranian-site MCP servers (shops, travel, news, finance, jobs, maps): [github.com/sepehr071/iran-mcp](https://github.com/sepehr071/iran-mcp).
+
+## مجوز استفاده (License)
+
+<a href="https://www.linkedin.com/in/sepehr-radmard"><img src="https://raw.githubusercontent.com/sepehr071/iran-mcp/main/assets/license-banner.png" alt="استفادهٔ شخصی و غیرتجاری رایگان است؛ برای استفادهٔ تجاری با سپهر رادمرد تماس بگیرید. Free for personal and non-commercial use; commercial use needs a license." width="100%"></a>
+
+**استفادهٔ شخصی و غیرتجاری رایگان است.** استفاده در شرکت، محصول پولی یا پروژهٔ مشتری به مجوز تجاری نیاز دارد؛ از راه [لینکدین](https://www.linkedin.com/in/sepehr-radmard) یا [گیت&zwnj;هاب](https://github.com/sepehr071) با سپهر رادمرد تماس بگیرید. متن کامل: [PolyForm Noncommercial 1.0.0](https://github.com/sepehr071/tiwall-mcp/blob/main/LICENSE). نسخه&zwnj;های پیش از 0.1.1 با مجوز MIT منتشر شده&zwnj;اند و همان مجوز را دارند.
+
+Free for personal and non-commercial use under the [PolyForm Noncommercial License 1.0.0](https://github.com/sepehr071/tiwall-mcp/blob/main/LICENSE). Using it in a company, a paid product or a client project needs a commercial license: contact Sepehr Radmard on [LinkedIn](https://www.linkedin.com/in/sepehr-radmard) or [GitHub](https://github.com/sepehr071). Versions before 0.1.1 were released under MIT and stay under it.
