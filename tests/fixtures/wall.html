@@ -1,0 +1,619 @@
+<div id="feedback-container" class="keep-center feedback feedback-watchState theaterpage-watchstates">
+			<a id="rate-wanaWatch-theater-66382" class="social-btn wishlist" href="?feedback=watchState&feedbackValue=wanaWatch&feedbackItemType=theater&feedbackItemId=66382" onclick="return myAjax.simpleCall(this,this,['feedback-container','to-reload'],{loadingIndicator: null,loadingIndicatorEnabled: null})">
+		می‌خواهم <span class="fb-count">۳۴</span></a>
+		<a id="rate-disliked-theater-66382" class="social-btn not-customer first-in-row star star-disliked" href="?feedback=watchState&feedbackValue=disliked&feedbackItemType=theater&feedbackItemId=66382" onclick="return login(this);">
+		<span class='val val1' data-value='1'>یک&nbsp;</span><span class='star fas fa-star'></span> <span class="fb-count">۴</span></a>
+		<a id="rate-rated2-theater-66382" class="social-btn not-customer star star-rated2" href="?feedback=watchState&feedbackValue=rated2&feedbackItemType=theater&feedbackItemId=66382" onclick="return login(this);">
+		<span class='val val2' data-value='2'>دو&nbsp;</span><span class='star fas fa-star'></span> <span class="fb-count">۹</span></a>
+		<a id="rate-watched-theater-66382" class="social-btn not-customer star star-watched" href="?feedback=watchState&feedbackValue=watched&feedbackItemType=theater&feedbackItemId=66382" onclick="return login(this);">
+		<span class='val val3' data-value='3'>سه&nbsp;</span><span class='star fas fa-star'></span> <span class="fb-count">۷</span></a>
+		<a id="rate-rated4-theater-66382" class="social-btn not-customer star star-rated4" href="?feedback=watchState&feedbackValue=rated4&feedbackItemType=theater&feedbackItemId=66382" onclick="return login(this);">
+		<span class='val val4' data-value='4'>چهار&nbsp;</span><span class='star fas fa-star'></span> <span class="fb-count">۴</span></a>
+		<a id="rate-liked-theater-66382" class="social-btn not-customer last-in-row star star-liked" href="?feedback=watchState&feedbackValue=liked&feedbackItemType=theater&feedbackItemId=66382" onclick="return login(this);">
+		<span class='val val5' data-value='5'>پنج&nbsp;</span><span class='star fas fa-star'></span> <span class="fb-count">۳۴</span></a>
+		<div class="avg-rating tooltip" title="امتیاز ۴٫۰ از ۵٫۰">۴٫۰ <div>&nbsp;&nbsp;👤&#xFE0E; ۵۸ </div></div>
+		<div class="clear"></div>
+</div>
+<div class="clear"></div>	<div id="wallScript">
+    	<style type="text/css">
+		.breadcrumb .title {
+			float: right;
+		}
+		
+		</style>
+		<script type="text/javascript">
+			// Persian digit format
+			var persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+			function formatPersianDigits(input) {
+			    input = input.toString();
+			    var result = '';
+			    for (var i = 0; i < input.length; i++)
+			        result += persianDigits[Number(input.charAt(i))];
+			    return result;
+			}
+			function confirmRemovePost() {
+				return confirm('آیا به زدودن این نوشته اطمینان دارید؟');
+			}
+			function validateWallPost(formElement, wallItemTagId, state) {
+								if(!$(formElement).find("textarea#wallBody").val().trim()) {
+					notify('لطفا متن نوشته خود را بنویسید', 'center', 'normal');
+					return false;
+				}
+				if($(formElement).find("textarea#wallBody").val().trim().length > 8192) {
+					notify('نوشته نمی‌تواند بیش از ۸۱۹۲ کاراکتر باشد', 'center', 'normal');
+					return false;
+				}
+				if($(formElement).find("input.tagId").val()=='0') {
+					notify('لطفا دسته‌بندی نوشته خود را نیز برگزینید', 'center', 'normal');
+					return false;
+				}
+				if('' && $(formElement).find("input.tagId").val() == '' && ($(formElement).find("input.reference").val()=='از...' || $.trim($(formElement).find("input.reference").val())=='') ) {
+					//notify('لطفا پدیدآورنده این نوشته را نیز بنویسید', 'center', 'normal');
+					//return false;
+				}
+				if($(formElement).find('#addItemFeedback').is(':checked')) {
+					var result = true;
+					$(formElement).find('.item-feedback-container li').each(function(index) {
+						if($(this).children('input').length > 0 && $.trim($(this).children('input').val())=='') {
+							$(this).children('a.removeOption').click();
+							//result = false;
+						};
+					});
+					if(!result) { if(!$('a[data-alt="#addItemFeedback"]').is('.current')) $('a[data-alt="#addItemFeedback"]').click(); notify('لطفا در بخش نظرسنجی گزینه‌ای را خالی مگذارید یا آن‌را حذف نمایید', 'center', 'slow'); return false; }
+				}
+				return true;
+			}
+			function validateItemFeedback(formElement, replyCount) {
+				var selections = $(formElement).find("input:checkbox:checked").length;
+				if(selections <= replyCount)
+					return true;
+				else {
+					notify('برای این نوشته نهایت تا ' + formatPersianDigits(replyCount) + ' پاسخ پذیرفته می‌باشد', null, 2000);
+					return false;
+				}
+			}
+			function onRated(itemId, newSelectedValue, average, userCount, message) {
+				var e = $('#wallLikes' + itemId);
+				if(!e.attr('userScore') || newSelectedValue==0) {
+					e.attr('userScore', newSelectedValue);
+					e.fadeOut(400, function() {
+						if(userCount > 1 || newSelectedValue==0) {
+							var innerText = formatPersianDigits(userCount) + " نفر این را امتیاز " + (userCount>1?"داده‌اند":"داده‌است");
+							if(userCount < 3) $(this).html(innerText).fadeIn("fast");
+							else $(this).html("<a href='?wallAction=loadFeedbacks&wallItemType=wall&feedbackValue=rate&wallId="+itemId+"' onclick=\"return myAjax.simpleCall(this,this,['wallLikes"+itemId+"','wallScript'],{loadingIndicator: null,loadingIndicatorEnabled: null})\">" + innerText + "</a>").fadeIn("fast");
+						}
+						else
+							$(this).html(' این را امتیاز داده‌است').fadeIn('fast');
+					});
+				}
+				if(newSelectedValue==0) {
+					e.removeAttr('userScore');
+				}
+			}
+						function onImageAddInit(data, img, files, index, settings) {
+				if(!$(img).is('.loaded')) {
+		    		$('#addImage-box').data('c', $('#addImage-box').data('c')?$('#addImage-box').data('c')+1:1);
+		    		var c = $('#addImage-box').data('c');
+		    		var template = document.wallImageTemplate = $(img).parent('.d-image').clone();
+		    		template.children('img').attr('id', 'image'+c+'-preview');
+		    		$(img).parent('.d-image').after(template);
+		    		bindAltClick(template.children('img').get(0));
+		    		template.hide();
+		    	}
+		    	$(img).attr('data-alt', '#single-image-selector');
+			}
+			function onImageAddComplete(data, img, files, index, settings) {
+				var template = document.wallImageTemplate;
+				if(template) {
+		    		if($('#addImage-box .d-image img.loaded').length >= 20) notify('نهایت تا ۲۰ عکس را می‌توان پیوست دیوارنوشته کرد', null, 1500);
+		    		else {
+		    			template.show();
+	    				if(index+1<files.length) addImage(template.children('img'), files, index+1, settings);
+	    				else $('#addImage-box input.image-selector').val('');
+	    			}
+		    	} else $('#addImage-box input.image-selector').val('');
+		    	document.wallImageTemplate = null;
+		    	if(!settings.old) $(img).siblings('input[type="hidden"].d-image-meta').val('updated').parent('.d-image').addClass('new');
+		    	$(img).siblings('a.tool').fadeIn('fast');
+		    	$('#addImage-box').animate({scrollLeft: $('#addImage-box').width() - $('#addImage-box .images').width()-50}, 100);
+			}
+			function onImageRemoved(img) {
+				if($(img).parent('.d-image').is('.new')) $(img).parent('.d-image').remove();
+				else $(img).parent('.d-image').addClass('removed').children('input[type="hidden"].d-image-src').val('');
+				var template = $('#addImage-box .d-image img:not(.loaded)').parent('.d-image');
+				if($('#addImage-box .d-image img.loaded').length==0) $('#addImage').prop('checked', 'checked').click();
+				else if(!template.is(':visible')) template.fadeIn();
+			}
+			function onFileRemoved(files) {
+				if(files.length==0) $('#addFile').prop('checked', 'checked').click();
+			}
+			function addVideo() {
+				var title = 'ویدیویی از سوی کاربران تیوال - UTPabwYixM';
+				var form = $('<form method="post" enctype="multipart/form-data"><input accept=".mp4,.mv,.mov,.qt,.ts,.3gp,.3gpp,.3g2,.3gp2,.mpg,.mpeg,.mp1,.mp2,.m1v,.m1a,.m2a,.mpa,.mpv,.mpv2,.mpe,.m4a,.m4p,.m4b,.m4r,.m4v,.avi,.flv,.f4v,.f4p,.f4a,.f4b,.vob,.lsf,.lsx,.asf,.asr,.asx,.webm,.mkv,.wmv" name="video" type="file" /><input name="data[title]" value="'+title+'" /><input name="data[category]" value="'+17+'" /></form>');
+				form.children('input').change(function() {
+					// video file are selected in OS dialogue box
+					var file;
+					if($(this).get(0).files && validateUpload($(this).get(0).files[0], {type:'video',validateSize:true}));
+					else return;
+					$('#upload-video').hide().siblings('#video-uploading').fadeIn().children('#upload-video-progress').html('آماده‌سازی بارگذاری...');
+					document.xhr = $.ajax({
+						type: 'GET',
+						dataType: 'json',
+						url: '/api/v2/aparat/form',
+						success: function(resp, status, xhr) {
+							if(resp.ok) {
+								form.append('<input name="frm-id" value="'+resp.data.id+'" />');
+								form.submit(function(e) {
+								    e.preventDefault();
+									$(this).ajaxSubmit({
+									    type: 'POST',
+									    dataType: 'json',
+									    url: '//sandbox.tiwall.com/proxy?url='+resp.data.url,
+									    cache: false,
+									    beforeSend: function(xhr) { document.xhr = xhr; },
+									    uploadProgress: function(e, position, total, perc) { $('#upload-video-progress').html('در حال بارگذاری ویدیو ... %'+formatPersianDigits(perc)); },
+									    success: function(resp, status, xhr, form) {
+									    	$('#upload-video').show().siblings('#video-uploading').hide();
+									    	if(resp.uploadpost && resp.uploadpost.uid) {
+										    	notify('ویدیو بارگذاری شد!<br/><span style="font-weight: normal;font-size: 11px;">حتی اگر تصویر پیش‌نمایش ویدیو در حال پردازش است هم می‌توانید نوشته خود را منتشر کنید</span>', 'success');
+										    	var vid = resp.uploadpost.uid;
+										    	//console.log(vid);
+										    	createLinkPreview('https://www.aparat.com/v/'+vid);
+									    	} else {
+									    		notify('بارگذاری در سرویس آپارات با مشکل روبرو شد', 'error');
+									    		console.log(resp);
+									    	}
+									    },
+									    error: function(xhr, status, error) {
+									    	$('#upload-video').fadeIn().siblings('#video-uploading').hide();
+									    	notify('بارگذاری ویدیو با مشکل روبرو شد', 'error');
+									    	console.log({xhr:xhr, status:status, error:error});
+									    }
+									});
+								});
+								form.submit();
+							} else {
+								$('#upload-video').fadeIn().siblings('#video-uploading').hide();
+								notify('آماده‌سازی سرویس آپارات با مشکل روبرو شد', 'error');
+								console.log(resp.error);
+							}
+						},
+						error: function(xhr, status, error)	{ $('#upload-video').fadeIn().siblings('#video-uploading').hide(); notify('انجام بارگذاری با مشکل روبرو شد', 'error'); console.log({xhr:xhr, status:status, error:error}); }
+					});
+				});
+				form.children('input').click();
+			}
+			function cancelVideo() {
+				if(document.xhr) {
+					document.xhr.abort();
+					notify('بارگذاری ویدیو لغو شد', 'info center', 'normal');
+					document.xhr = null;
+				}
+				$('#videoUrl').val('');
+				$('.link-preview').removeClass('video');
+				$('#upload-video').html('بارگذاری ویدیو').fadeIn().siblings('#video-uploading').hide();
+			}
+			
+			function createLinkPreview(url) {
+				if(url.indexOf('aparat.com/v/')!=-1) {
+					var patt = /aparat.com\/v\/([^\/]+)/i
+					var matchs = patt.exec(url);
+					var vid = matchs[1];
+					url = 'https://www.aparat.com/v/'+vid;
+					$('#videoUrl').val(vid);
+					var video;
+					$('.link-preview').html("<object class='loader' data='https://zbcdn.cloud/images/tiwall_loading_inline.svg?25'></object>");
+					$.ajax('/api/v2/aparat/search?criteria='+url).success(function(resp, status, xhr) {
+						resp = JSON.parse(resp);
+						if(resp.ok && resp.data && resp.data.length) {
+							video = resp.data[0];
+							$('.link-preview').addClass('video').html("<div data-url='"+url+"'><img src='"+video.small_poster+"' /><span class='title'>"+video.title+"</span><a class='remove'></a>&lt;/div>".replace("&lt;", "<"));
+							$('#upload-video').html('جایگزینی ویدیو');
+						}
+					}).done(function() { if(!video) $('.link-preview').removeClass('video').html(''); });
+					return true;
+				} else if(url.indexOf('some other special url')!=-1) {
+					return true;
+				}
+				return false;
+			}
+			
+			function wallOnReady() {
+				//if(typeof wallOnReadyInited != 'undefined') return;
+				//console.log(typeof wallOnReadyInited);
+					
+				setTimeout(decacheLinks, 300);
+				$("#wallBody").show();
+				document.processedLinkPreviews = [];
+				
+								$('.wall-post.collapsable').each(function() {
+					var postText = $(this).children('.wallItemBody, .wallItemBody-confirmed').html();
+					if(!$(this).find('.icon.icon-arrow.expand-btn').length) $(this).find('.writer').before("&lt;span class='icon icon-arrow expand-btn'>&lt;/span>&lt;div title='".replaceAll("&lt;", "<")+postText+"' class='expand-btn tooltip'>&lt;/div>".replaceAll("&lt;", "<")).end().tooltip(window.tooltipConfig);
+				});
+				
+				$(document).off('click', '.link-preview .remove').on('click', '.link-preview .remove', function(e) {
+					if($(this).parents('.video').length) cancelVideo();
+					
+					e.stopPropagation();
+					$(this).parent().remove();
+					//document.processedLinkPreviews = [];
+				});
+				$(document).off('click', '.link-preview > div').on('click', '.link-preview > div', function() { window.open($(this).data('url')); });
+				$(document).on('keyup', '#wallBody', function(e) {
+					if($('.link-preview').is(':empty')) {
+						var patt = /(\bwww\..[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|]\b)|(\bhttps?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|]\b)|(\b[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|]\.(com|org|net|ir|co|al|lv|)\b)/gim;
+						var matchs;
+						while((matchs = patt.exec($(this).val())) != null) {
+							if(matchs && matchs[0] && !document.processedLinkPreviews.includes(matchs[0])) {
+								document.processedLinkPreviews.push(matchs[0]);
+								if(createLinkPreview(matchs[0])) break;
+							}
+						}
+					}
+				});
+				
+				$(".reference-container li").click(function() {
+					if($(this).attr("val")=="")
+						$(this).parent().siblings("input.val").removeAttr("readonly").removeClass("readonly").focus();
+					else
+						$(this).parent().siblings("input.val").attr("readonly", "readonly").addClass("readonly");
+				});
+				
+				$(document).off('click', '.ddl.disabled').on('click', '.ddl.disabled', function() { notify('لطفا نخست بخش «درباره» را پر کنید', 'center', 'fast'); });
+				
+				$('div.wallpost-checkbox').off('click', 'input.attach').on('click', 'input.attach', function (e) {
+					// an attach checkbox is changing checked state
+					var st = $(this).parents("#special-tools");
+					if(st.children('.icons').is('.disabled')) { notify('لطفا نخست بخش «درباره» را پر کنید', 'center', 'fast'); e.preventDefault(); return; }
+					var attachments = st.siblings('.attachments');
+					var id = '#'+$(this).attr('id');
+					var callback = function() { attachments.children('.sep').toggleClass('hidden', attachments.children('.wallpost-attachment:visible').length>0); }
+					if(this.checked) attachments.children(id+'-box').slideDown("fast", callback); 
+					else attachments.children(id+'-box').slideUp('fast', callback);
+					$('a[data-alt="'+id+'"]').addClass('current').siblings().removeClass('current');
+					if(this.checked && $(this).is('[name=addImage]') && $(id+'-box .d-image img.loaded').length==0) $(id+'-box').find('.image-preview').click();
+					else if(this.checked && $(this).is('[name=addFile]') && $(id+'-box .d-file img.loaded').length==0 && !$(this).data('byPaste')) $(id+'-box').find('.file-preview').click();
+					else if(this.checked && $(this).is('[name=addVideo]') && $('.link-preview.video').length==0) st.find('#upload-video').click();
+					if(this.checked && $('input[name="tagId"]').val()=='0') $('#wallpost-tag-ddl li:first-child').click();
+					if($(this).parents('.wall-post').length && this.checked && $(this).is('[name=addFile]')) {
+						var wpId = $(this).parents('.wall-post').data('id');
+						window.commentUploader.attach({
+					        form: '#wallCommentItemForm'+wpId,
+					        dropBox: `#addFile${wpId}-box`,
+					        fileInput: `#multiple-file-selector${wpId}`,
+					        filesBox: `#files${wpId}`,
+					        progress: `#progress${wpId}`,
+					        progressValue: `#progressValue${wpId}`,
+					
+					        onSuccess: function (response) { console.log('پیوست کامنت آپلود شد:', response); },
+					        onError: function (error) { console.log('آپلود ناموفق بود:', error); }
+					   });
+					}
+				  });
+				
+				$('.wallpost-attachment .close').off('click').on('click', function() {
+					$($('a[data-tab-target="#'+$(this).parents('.wallpost-attachment').attr('id')+'"]').data('alt')).click();
+					if($(this).parents('.wallpost-attachment').attr('id')=='addFile-box') { window.mainUploader.reset(); }
+					else if($(this).parents('.wallpost-attachment').attr('id').startsWith('addFile')) { window.commentUploader.reset(); }
+				});
+				
+				$(document).on("mouseenter", ".user-tools", function() {
+					clearTimeout($(this).attr("tid"));
+				}).on("mouseleave", ".user-tools", function() {
+					clearTimeout($(this).attr("tid"));
+					$(this).attr("tid", setTimeout(function(_this) {
+						$(_this).addClass("hidden");
+					}, 700, this));
+				});
+				$(document).on("mouseenter", ".writer a.user, .commenter a.user", function(e) {
+					var userToolsPanel = $(this).siblings(".user-tools");
+					clearTimeout(userToolsPanel.attr("tid"));
+					userToolsPanel.attr("tid", setTimeout(function(o) {
+						o.removeClass("hidden");
+					}, 700, userToolsPanel));
+				}).on("mouseleave", ".writer a.user, .commenter a.user", function() {
+					var userToolsPanel = $(this).siblings(".user-tools");
+					clearTimeout(userToolsPanel.attr("tid"));
+					userToolsPanel.attr("tid", setTimeout(function(o) {
+						o.addClass("hidden");
+					}, 300, userToolsPanel));
+				});
+				$('.writer a.user, .commenter a.user').mouseenter(function() {
+					$(this).next('.rank-badge').hover();
+				});
+				$('.writer a.user, .commenter a.user, .touch-hover').click(function(e) {
+					if($(window).width() <= tablet && !$(this).data('hovered')) {
+						e.stopPropagation();
+						$('[data-hovered]').removeAttr('data-hovered');
+						$(this).attr('data-hovered', true);
+						return false;
+					}
+				});
+				$('a.history').click(function(e) {
+					e.stopPropagation();
+					$(this).next('div.history-log').fadeIn();
+				});
+				$('div.history-log').mouseleave(function() {
+					$(this).fadeOut();
+				});
+				$('#wallItems').click(function(e) {
+					e.stopPropagation();
+				});
+				$("#wallItems").off('click', '.expand-btn').on('click', '.expand-btn', function() {
+					var element = $(this).parents('.wall-post');
+					if(element.is('.collapsed')) {
+						if($('body').is('.messages')) {
+							$(body).data('scroll', $(document).scrollTop());
+							element.siblings().hide();
+							$('div.wall-post-box').hide();
+							$('.load-later').addClass('disabled');
+							$('.wall-post.expanded').addClass('collapsed').removeClass('expanded');
+							$('#footer').show().css('visibility', '');
+							window.history.pushState({}, '', '?wallPostId='+$(this).parents('.wall-post').data('id'));
+						}
+						element.removeClass('collapsed').addClass('expanded');
+						setTimeout(function() { 
+							var scrollTop = $(document).scrollTop();
+							if(element.length /*&& element.offset().top > scrollTop && element.offset().top+element.height()+200 > scrollTop*/+$(window).height()) scrollToElement(element, -90, 300);
+						}, 300);
+					} else {
+						if($('body').is('.messages')) {
+							if(!$(this).is('.back-arrow')) return true;
+														if($(this).parents('.wall-post').find('form.wall-post-box').length) {
+								//$(this).parents('.wall-post').children('div.expand-btn').click().parents('.wall-post').find('div.expand-btn').click();
+								notify('لطفا نخست ذخیره یا لغو نمایید', 'autohide', 1000);
+								return false;
+							}
+							element.siblings().fadeIn();
+							$('div.wall-post-box').fadeIn();
+							$('.load-later').removeClass('disabled');
+							$(document).scrollTop($(body).data('scroll'));
+							window.history.pushState({}, '', window.location.pathname);
+						}
+						element.addClass('collapsed');
+					}
+					return false;
+				});
+				$(".wall-post div.expand-btn").each(function() {
+					$(this).css('height', $(this).parents('.wall-post').height());
+				});
+				$('.ddl-menu').each(function() {
+					if($(this).find('li').length==1) $(this).find('li').click();
+				});
+				onWindowResize();
+				initFlex();
+				
+				// to recreate video preview, in case user changes 'about' after a video preview is generated based on url type
+				$('.link-preview .remove').click();
+				$('#wallBody').keyup();
+				//
+				
+				$('.wallItemBody').each(function() {
+					if(!$(this).data('tosrus-done')) tosrus('#'+$(this).attr('id')+' a');
+					$(this).data('tosrus-done', true);
+				});
+				
+								
+				// file upload
+				
+								wallOnReadyInited = true;
+		    };
+		    $(document).ready(function() {
+		    	//console.log('ready (wall)');
+		    	globalOnReady();
+				wallOnReady();
+			});
+			wallOnReady();
+        </script>
+	</div>
+		<script type="text/javascript">
+		$(document).ready(function() {
+			hiddenTagsOpen = false;
+			hiddenTagsTOID = null;
+			function switchHiddenTags(animate) {
+				if(hiddenTagsOpen) {
+					if(animate===true) $("#filter-menu .hidden2").addClass('hidden').fadeOut(); else $("#filter-menu .hidden2").addClass('hidden').hide();
+					$("#filter-menu .knob-icon").removeClass("knob-icon-active");
+					$('.m-inv').removeClass('show');
+					hiddenTagsOpen = false;
+				} else {
+					$("#filter-menu .hidden2").removeClass('hidden').fadeIn();
+					$("#filter-menu .knob-icon").addClass("knob-icon-active");
+					$('.m-inv').addClass('show');
+					hiddenTagsOpen = true;
+				}
+
+			}
+			$("#filter-menu .knob").click(switchHiddenTags);
+			$("#filter-menu").mouseleave(function(){
+				if(hiddenTagsOpen && !$('body').is('.messages')) {
+					hiddenTagsTOID = setTimeout(function() { switchHiddenTags(true); }, 500);
+				}
+			});
+			$("#filter-menu").mouseover(function() {
+				clearTimeout(hiddenTagsTOID);
+			});
+			$(".itemFeedbackOptions a, .itemFeedbackOptions label, .itemFeedbackOptions input").mouseover(function() {
+				if($(this).attr("id")) $(".itemFeedbackBar-" + $(this).attr("id").split("-")[1]).addClass('hover');
+			}).mouseout(function() {
+				if($(this).attr("id")) $(".itemFeedbackBar-" + $(this).attr("id").split("-")[1]).removeClass('hover');
+			});
+			
+						$('#wallpost-about.toflex').on('select:flexdatalist', function(e, s, options) {
+				myAjax.simpleCall(this,'?wallpost-about='+s.id,['wallpost-assets', 'wallScript'],{loadingIndicator: null,loadingIndicatorEnabled: null});
+				$('textarea#wallBody').focus();
+			});
+					});
+	</script>
+	        				
+								<div id="filter-menu" data-snap-offset="5" data-offset="-500" class="tabmenu hz-scroll embedded page keep-center">
+						<div class="c hz-scroll-c">
+																		<a href="/p/korokodil8/tags/featured" 
+						class="selected" 
+						style="">
+					برجسته					</a>
+										<a href="/p/korokodil8/tags/all" 
+						class="tab" 
+						style="">
+					همه					</a>
+					<div class='sep'></div>					<a href="/p/korokodil8/tags/comment" 
+						class="tab" 
+						style="">
+					گفت‌وگو					</a>
+										<a href="/p/korokodil8/tags/review" 
+						class="tab" 
+						style="">
+					نقد کاربران					</a>
+										<a href="/p/korokodil8/tags/critique" 
+						class="tab" 
+						style="">
+					نقد کارشناسان					</a>
+										<a href="/p/korokodil8/tags/memorial-dialogs" 
+						class="tab" 
+						style="">
+					دیالوگ‌های ماندگار					</a>
+										<a href="/p/korokodil8/tags/meeting" 
+						class="tab hidden hidden2" 
+						style="display:none;">
+					قرار					</a>
+								<div class='mark color-theater'></div>			</div>
+					</div>
+				<div class='clear'></div>
+	<div class="tip" style="margin: 10px 0 15px;">
+		«تیوال» به عنوان شبکه اجتماعی هنر و فرهنگ، همچون دیواری‌است برای هنردوستان و هنرمندان برای نوشتن و گفت‌وگو درباره زمینه‌های علاقه‌مندی مشترک، خبررسانی برنامه‌های جالب به هم‌دیگر و پیش‌نهادن دیدگاه و آثار خود. برای فعالیت در تیوال <a onclick="return login();" href="javascript:;">به سیستم وارد شوید</a>	</div>
+			    <div class="clear"></div>
+		<div id='wall-content' class="list wall embedded">
+				
+	<div class="clear"></div>
+
+	<div id="wallItems"><div id="wallItem525967" class="wall-post browsable  l not-open by-customer origin-page_wall" data-id="525967">
+								<div class="sep"></div>
+				<div class='wallpost-tags by-customer'><a href='?customers=1'>خریدار<i class='far fa-ticket'></i></a></div>								<div class="wallpost-tags">
+									<a class="tag-spoil note" style="pointer-events: none;" href='https://www.tiwall.com/theater/korokodil8/tags/spoil' style="">احتمال افشا یا کاهش جذابیت</a>
+									</div>
+												<div class="writer" style="margin-top: 10px">
+															<a class="user" href='https://www.tiwall.com/u/u.tk1ifx'><div class="user-image" style="background: url(//user.zirbana.com/image/1691195) no-repeat; background-size: cover" ></div>بهراد سخدری <span>(u.tk1ifx)</span></a>
+															<span class="user-tools hidden hz-scroll">
+						<div id="userToolbar525967">
+														<a class='first' href='/u/u.tk1ifx'>تیوال این کاربر</a>
+							<a href='/u/u.tk1ifx/profile'>پروفایل</a>
+																					<a id="follow-user-wallpost-525967" class='follow-link' href="javascript:;" onclick="return login(this);" >
+								<span class='icon not-followed'></span>
+								دنبال							</a>
+																					<a id="block-user-wallpost-" class='follow-link' href="javascipr:;" onclick="return login(this);" >
+								<i class='block-user far fa-ban'></i>
+								نادیده‌گیری							</a>
+														<div class="left membership-date"><span>از</span><span>&nbsp;</span><span class="tooltip" title="تاریخ ۱۶ تیر ۱۴۰۲ ساعت ۰۶:۵۳">۱۶ تیر ۱۴۰۲</span></div>						</div>
+					</span>
+																		</div>
+				<div class="right datetime"><span class="tooltip" title="تاریخ ۲۵ آبان ۱۴۰۵ ساعت ۰۸:۲۳">۶ ساعت پیش</span></div>
+				<div id="wallItemBody525967" class="clear wallItemBody" >
+				این تاتر خوب بود ولی نقدهایی هم بهش تعلق میگرفت<br />
+ بنظرم اول اینکه تا آخر مشخص نشد که از دید این بچه داره اتفاق میوفته ( این رو یکی از دوستان	<a href="javascript:;" class='showFullText light-bg'>...&nbsp;دیدن ادامه&nbsp;››</a>
+	<span class="hidden-section"> که جز عوامل بعد از پرسش من بهم گفت) <br />
+دوم اینکه من معتقد نیستم که پدر و مادری باشند که مهر و محبتشون نسبت به بچه شون صفر باشه ولی انگار توی این تاتر این شکلی بود.<br />
+لذا پیشنهاد میکنم آخر نمایش رو تغییر بدین انگار که بچه مریضه و تب داره و پدرش میگه: « بچه مریض شدی قربونت برم» کمی نوازشش کنه و ببرتش بیمارستان . که هم محبت والدینش رو مخصوصا پدرش رو نشون بده هم انگار این مسایل توی ذهن بچه بوده باشه</span>
+					</div>
+								<div class="wallFeedbacks">
+										<div class="wall-toolbar" style="">
+						<i class="fas fa-pen edited tooltip" title="ویرایش شده"></i>						<div class="right datetime"><span class="tooltip" title="تاریخ ۲۵ آبان ۱۴۰۵ ساعت ۰۸:۲۳">۶ ساعت پیش</span></div>
+                    	<div class="links" id="wallFeedbackLinks525967">
+																		<a id="like-read-wall-525967" title='وضعیت خواندن و دوست‌داشتن' class="feedback-link" href="javascript:;" onclick="return login(this);">
+											خواندم</a>
+																					<a id="like-like-wall-525967" title='وضعیت خواندن و دوست‌داشتن' class="feedback-link grouped" href="javascript:;" onclick="return login(this);">
+											دوست‌دارم</a>
+																					<a id="report-illegal-wall-525967" title='گزارش برای توجه گروه همیاری - بدون فاش سازی' class="feedback-link" href="javascript:;" onclick="return login(this);">
+											گزارش</a>
+																	<a id="wallpost-comment-525967" href="javascript:;" class="feedback-link" onclick="return openCommentBox(525967, this);">نظردهی</a>
+						</div>
+												<div class='actions admin'>
+							<a class='popup-switch' href='javascript:;'><i class="fal fa-bars"></i></a>
+							<div class='menu popup'>
+												                <a target="_blank" class="icon fab fa-telegram-plane no-rand wp-share" href="https://t.me/share/url?url=https://www.tiwall.com/wall/post/525967"></a>
+				                <a target="_blank" class="icon fab fa-whatsapp no-rand wp-share" href="https://api.whatsapp.com/send?text=https://www.tiwall.com/wall/post/525967"></a>
+				                <a target="_blank" class="icon fab fa-twitter no-rand wp-share" href="https://twitter.com/intent/tweet?text=%D8%AA%DB%8C%D9%88%D8%A7%D9%84+%7C+%D8%A8%D9%87%D8%B1%D8%A7%D8%AF+%D8%B3%D8%AE%D8%AF%D8%B1%DB%8C+%D8%AF%D8%B1%D8%A8%D8%A7%D8%B1%D9%87+%D9%86%D9%85%D8%A7%DB%8C%D8%B4+%DA%A9%D8%B1%D9%88%DA%A9%D9%88%D8%AF%DB%8C%D9%84%3A+%D8%A7%DB%8C%D9%86+%D8%AA%D8%A7%D8%AA%D8%B1+%D8%AE%D9%88%D8%A8+%D8%A8%D9%88%D8%AF+%D9%88%D9%84%DB%8C+%D9%86%D9%82%D8%AF%D9%87%D8%A7%DB%8C%DB%8C+%D9%87%D9%85+%D8%A8%D9%87%D8%B4+%D8%AA%D8%B9%D9%84%D9%82+%D9%85%DB%8C%DA%AF%D8%B1%D9%81%D8%AA%0D%0A+%D8%A8%D9%86%D8%B8%D8%B1%D9%85+%D8%A7%D9%88%D9%84+%D8%A7%DB%8C%D9%86%DA%A9%D9%87+%D8%AA%D8%A7+%D8%A2%D8%AE%D8%B1+%D9%85%D8%B4%D8%AE%D8%B5+%D9%86%D8%B4%D8%AF+%DA%A9%D9%87+%D8%A7%D8%B2+%D8%AF%DB%8C%D8%AF+%D8%A7%DB%8C%D9%86+%D8%A8%DA%86%D9%87+%D8%AF%D8%A7%D8%B1%D9%87+%D8%A7%D8%AA%D9%81%D8%A7%D9%82+%D9%85%DB%8C%D9%88%D9%81%D8%AA%D9%87+%28+%D8%A7%DB%8C%D9%86+%D8%B1%D9%88+%DB%8C%DA%A9%DB%8C+%D8%A7%D8%B2+%D8%AF%D9%88%D8%B3%D8%AA%D8%A7%D9%86+%DA%A9%D9%87+%D8%AC%D8%B2+%D8%B9%D9%88%D8%A7%D9%85%D9%84+%D8%A8%D8%B9%D8%AF+%D8%A7%D8%B2+%D9%BE%D8%B1%D8%B3%D8%B4+%D9%85%D9%86+%D8%A8%D9%87%D9%85+%DA%AF%D9%81%D8%AA%29+%0D%0A%D8%AF%D9%88%D9%85+%D8%A7%DB%8C%D9%86%DA%A9%D9%87+%D9%85%D9%86+%D9%85%D8%B9%D8%AA%D9%82%D8%AF+%D9%86%DB%8C%D8%B3%D8%AA%D9%85+%DA%A9%D9%87+%D9%BE%D8%AF%D8%B1+%D9%88+%D9%85%D8%A7%D8%AF%D8%B1%DB%8C+%D8%A8...&url=https://www.tiwall.com/wall/post/525967&via=twittiwal"></a>
+				                <a target="_blank" class="icon fab fa-facebook-f no-rand wp-share" href="https://www.facebook.com/sharer/sharer.php?u=https://www.tiwall.com/wall/post/525967"></a>
+				                				                <a class="clear no-pjax" target="permalink_window" href="/wall/post/525967">پیوند این نوشته</a>
+																							</div>
+													</div>
+												<div class="clear"></div>
+					</div><!-- end of wall-toolbar -->
+
+					<div class="wallLikes clear indented" id="wallLikes525967" >
+									<a href='/u/hesamrezaeie' >حسام؟</a> و 				<a href='/u/shaahinn' >شاهین ه</a>							این را
+							خواندند						<div class="clear"></div>
+											</div>
+					<div class="wallComments indented replace replace-with-id" data-on-pjax-success="wallOnReady" id="wallComments525967">
+	<div class="wallCommentItemForm post-box" id="wallCommentItemFormContainer525967" >
+		        <div class="">برای بهره بهتر از تیوال لطفا <a class="bold" href="javascript:;" onclick="return login();">عضو یا وارد شوید</a></div>
+                <div class="clear"></div>
+	</div>
+    <div class="clear"></div>
+</div><!-- end of .wallComments.indented -->
+				</div><!-- end of .wallFeedbacks -->
+								<div class="clear"></div>
+			 </div> <!-- (seems extra) -->
+						<div id="wallItem525622" class="wall-post browsable  not-open by-customer no-sep origin-page_wall" data-id="525622">
+								<div class="sep"></div>
+				<div class='wallpost-tags by-customer'><a href='?customers=1'>خریدار<i class='far fa-ticket'></i></a></div>								<div class="wallpost-tags">
+									<a class="tag-comment" href='https://www.tiwall.com/theater/korokodil8/tags/comment' style="">گفت‌وگو</a>
+									</div>
+												<div class="writer">
+															<a class="user" href='https://www.tiwall.com/u/u.aeuppe'><div class="user-image" style="background: url(//user.zirbana.com/image/2105108) no-repeat; background-size: cover" ></div>امین آبک <span>(u.aeuppe)</span></a>
+															<span class="user-tools hidden hz-scroll">
+						<div id="userToolbar525622">
+														<a class='first' href='/u/u.aeuppe'>تیوال این کاربر</a>
+							<a href='/u/u.aeuppe/profile'>پروفایل</a>
+																					<a id="follow-user-wallpost-525622" class='follow-link' href="javascript:;" onclick="return login(this);" >
+								<span class='icon not-followed'></span>
+								دنبال							</a>
+																					<a id="block-user-wallpost-" class='follow-link' href="javascipr:;" onclick="return login(this);" >
+								<i class='block-user far fa-ban'></i>
+								نادیده‌گیری							</a>
+														<div class="left membership-date"><span>از</span><span>&nbsp;</span><span class="tooltip" title="تاریخ ۰۵ آذر ۱۴۰۳ ساعت ۱۷:۴۸">۰۵ آذر ۱۴۰۳</span></div>						</div>
+					</span>
+																		</div>
+				<div class="right datetime"><span class="tooltip" title="تاریخ ۲۳ آبان ۱۴۰۵ ساعت ۲۳:۲۱">۲ روز پیش، شنبه ساعت ۲۳:۳۶</span></div>
+				<div id="wallItemBody525622" class="clear wallItemBody" >
+				خیلی جذاب بود ؛ کاملا مشخص بود که به همه چیز فکر شده تا لحظات جذاب و چشم نوازی برای مخاطب رقم بزنه . تبریک میگم به تیم سازنده ی خفن 				</div>
+								<div class="wallFeedbacks">
+										<div class="wall-toolbar" style="">
+												<div class="right datetime"><span class="tooltip" title="تاریخ ۲۳ آبان ۱۴۰۵ ساعت ۲۳:۲۱">۲ روز پیش، شنبه</span></div>
+                    	<div class="links" id="wallFeedbackLinks525622">
+																		<a id="like-read-wall-525622" title='وضعیت خواندن و دوست‌داشتن' class="feedback-link" href="javascript:;" onclick="return login(this);">
+											خواندم</a>
+																					<a id="like-like-wall-525622" title='وضعیت خواندن و دوست‌داشتن' class="feedback-link grouped" href="javascript:;" onclick="return login(this);">
+											دوست‌دارم</a>
+																					<a id="report-illegal-wall-525622" title='گزارش برای توجه گروه همیاری - بدون فاش سازی' class="feedback-link" href="javascript:;" onclick="return login(this);">
+											گزارش</a>
+																	<a id="wallpost-comment-525622" href="javascript:;" class="feedback-link" onclick="return openCommentBox(525622, this);">نظردهی</a>
+						</div>
+												<div class='actions admin'>
+							<a class='popup-switch' href='javascript:;'><i class="fal fa-bars"></i></a>
+							<div class='menu popup'>
+												                <a target="_blank" class="icon fab fa-telegram-plane no-rand wp-share" href="https://t.me/share/url?url=https://www.tiwall.com/wall/post/525622"></a>
+				                <a target="_blank" class="icon fab fa-whatsapp no-rand wp-share" href="https://api.whatsapp.com/send?text=https://www.tiwall.com/wall/post/525622"></a>
+				                <a target="_blank" class="icon fab fa-twitter no-rand wp-share" href="https://twitter.com/intent/tweet?text=%D8%AA%DB%8C%D9%88%D8%A7%D9%84+%7C+%D8%A7%D9%85%DB%8C%D9%86+%D8%A2%D8%A8%DA%A9+%D8%AF%D8%B1%D8%A8%D8%A7%D8%B1%D9%87+%D9%86%D9%85%D8%A7%DB%8C%D8%B4+%DA%A9%D8%B1%D9%88%DA%A9%D9%88%D8%AF%DB%8C%D9%84%3A+%D8%AE%DB%8C%D9%84%DB%8C+%D8%AC%D8%B0%D8%A7%D8%A8+%D8%A8%D9%88%D8%AF+%D8%9B+%DA%A9%D8%A7%D9%85%D9%84%D8%A7+%D9%85%D8%B4%D8%AE%D8%B5+%D8%A8%D9%88%D8%AF+%DA%A9%D9%87+%D8%A8%D9%87+%D9%87%D9%85%D9%87+%DA%86%DB%8C%D8%B2+%D9%81%DA%A9%D8%B1+%D8%B4%D8%AF%D9%87+%D8%AA%D8%A7+%D9%84%D8%AD%D8%B8%D8%A7%D8%AA+%D8%AC%D8%B0%D8%A7%D8%A8+%D9%88+%DA%86%D8%B4%D9%85+%D9%86%D9%88%D8%A7%D8%B2%DB%8C+%D8%A8%D8%B1%D8%A7%DB%8C+%D9%85%D8%AE%D8%A7%D8%B7%D8%A8+%D8%B1%D9%82%D9%85+%D8%A8%D8%B2%D9%86%D9%87+.+%D8%AA%D8%A8%D8%B1%DB%8C%DA%A9+%D9%85%DB%8C%DA%AF%D9%85+%D8%A8%D9%87+%D8%AA%DB%8C%D9%85+%D8%B3%D8%A7%D8%B2%D9%86%D8%AF%D9%87+%DB%8C+%D8%AE%D9%81%D9%86+&url=https://www.tiwall.com/wall/post/525622&via=twittiwal"></a>
+				                <a target="_blank" class="icon fab fa-facebook-f no-rand wp-share" href="https://www.facebook.com/sharer/sharer.php?u=https://www.tiwall.com/wall/post/525622"></a>
+				                				                <a class="clear no-pjax" target="permalink_window" href="/wall/post/525622">پیوند این نوشته</a>
+																							</div>
+													</div>
+												<div class="clear"></div>
+					</div><!-- end of wall-toolbar -->
+
+					<div class="wallLikes clear indented" id="wallLikes525622" >
+									<a href='/u/hesamrezaeie' >حسام؟</a>،				<a href='/u/u.5vpcsa' >ستایش</a>،				<a href='/u/negin_lucifer' >نگین</a>،				<a href='/u/a211350' >امیر مسعود</a> و 				<a href='/u/u.4ja53h' >**حسین**</a>							این را
+							خواندند<br/>				<a href='/royeshsetareh' >رویش ستاره</a>							این را
+							دوست دارد						<div class="clear"></div>
+											</div>
+					<div class="wallComments indented replace replace-with-id" data-on-pjax-success="wallOnReady" id="wallComments525622">
+	<div class="wallCommentItemForm post-box" id="wallCommentItemFormContainer525622" >
+		        <div class="">برای بهره بهتر از تیوال لطفا <a class="bold" href="javascript:;" onclick="return login();">عضو یا وارد شوید</a></div>
+                <div class="clear"></div>
+	</div>
+    <div class="clear"></div>
+</div><!-- end of .wallComments.indented -->
+				</div><!-- end of .wallFeedbacks -->
+								<div class="clear"></div>
+			 </div> <!-- (seems extra) -->
+						
