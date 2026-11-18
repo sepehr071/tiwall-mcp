@@ -86,10 +86,6 @@ A real call on 17 Nov 2026: `tw_events(category="theater", city="تهران")` l
 - Unverified: sold-out wording on session pages, a venue with no events, and Persian-calendar `day=` input.
 - No buying, reserving or login.
 
-## How it works
-
-Tiwall has no public API. The pages and its one JSON search endpoint were mapped in Chrome, and each tool was compared with the real rendered pages in Chrome on 2026-11-16 (all matched, see the map's test report). Requests use a Chrome-like TLS client, a short cache and a low request rate; the ArvanCloud challenge cookie is handled by the client's cookie jar. The server ignores system proxy variables on purpose.
-
 ## فارسی
 
 <div dir="rtl">
